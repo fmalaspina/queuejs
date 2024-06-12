@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Number Queue</title>
+</head>
+<body>
+  <h1>Random Number Queue</h1>
+  <p>Last 5 numbers: <span id="numbers"></span></p>
+  <p>Average of last 5 numbers: <span id="average"></span></p>
+  <button id="generate">Generate Random Number</button>
+
+  <script>
+    // Function to get queue from local storage or create it if it doesn't exist
+    function getQueue() {
+      let queue = localStorage.getItem('numberQueue');
+      return queue ? JSON.parse(queue) : [];
+    }
+
+    // Function to set queue in local storage
+    function setQueue(queue) {
+      localStorage.setItem('numberQueue', JSON.stringify(queue));
+    }
+
+    // Function to generate a random number
+    function generateRandomNumber() {
+      return Math.floor(Math.random() * 100) + 1; // Generate a number between 1 and 100
+    }
+
+    // Function to update the queue with a new random number
+    function updateQueue() {
+      let queue = getQueue();
+      let randomNumber = generateRandomNumber();
+
+      if (queue.length >= 5) {
+        queue.shift(); // Remove the oldest number if queue length is 5 or more
+      }
+
+      queue.push(randomNumber);
+      setQueue(queue);
+      return queue;
+    }
+
+    // Function to calculate the average of the last 5 numbers
+    function calculateAverage(queue) {
+      if (queue.length === 0) return 0;
+      let sum = queue.reduce((acc, num) => acc + num, 0);
+      return sum / queue.length;
+    }
+
+    // Function to update the display
+    function updateDisplay() {
+      let queue = getQueue();
+      document.getElementById('numbers').textContent = queue.join(', ');
+      document.getElementById('average').textContent = calculateAverage(queue).toFixed(2);
+    }
+
+    // Event listener for the generate button
+    document.getElementById('generate').addEventListener('click', () => {
+      updateQueue();
+      updateDisplay();
+    });
+
+    // Initial display update on page load
+    window.addEventListener('load', updateDisplay);
+  </script>
+</body>
+</html>
